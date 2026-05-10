@@ -96,8 +96,8 @@ export default function ContentEditor() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-800">Your LinkedIn Content</h2>
-        <p className="text-slate-500 mt-1">
+        <h2 className="text-3xl font-semibold tracking-tight text-white">Your LinkedIn Content</h2>
+        <p className="text-slate-200/80 mt-2">
           Edit, refine, and copy your generated content. Switch between variations below.
         </p>
       </div>
@@ -110,8 +110,8 @@ export default function ContentEditor() {
             onClick={() => setActiveTab(i)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === i
-                ? "bg-brand-primary text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-cyan-200 text-slate-950"
+                : "bg-white/10 text-slate-200 hover:bg-white/20 border border-white/20"
             }`}
           >
             <FileText className="w-4 h-4 inline mr-1.5" />
@@ -121,13 +121,13 @@ export default function ContentEditor() {
       </div>
 
       {/* Editor */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 overflow-hidden">
+      <div className="bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
         {/* Preview */}
-        <div className="p-6 border-b border-slate-100 bg-slate-50">
-          <p className="text-xs text-slate-400 mb-2 font-medium uppercase tracking-wider">
+        <div className="p-6 border-b border-white/15 bg-white/10">
+          <p className="text-xs text-slate-300 mb-2 font-medium uppercase tracking-wider">
             Preview
           </p>
-          <div className="whitespace-pre-line text-slate-800 leading-relaxed text-sm">
+          <div className="whitespace-pre-line text-slate-100 leading-relaxed text-sm">
             {editedContent[activeTab]}
           </div>
         </div>
@@ -137,13 +137,13 @@ export default function ContentEditor() {
           <textarea
             value={editedContent[activeTab]}
             onChange={(e) => updateContent(e.target.value)}
-            className="w-full min-h-[300px] p-4 rounded-lg border border-slate-200 bg-white text-slate-800 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary resize-y"
+            className="w-full min-h-[300px] p-4 rounded-lg border border-white/20 bg-slate-950/35 text-slate-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-cyan-200/35 focus:border-cyan-200/60 resize-y"
             placeholder="Edit your content here..."
           />
           <div className="flex items-center justify-between mt-2">
             <span
               className={`text-xs ${
-                charCount > 3000 ? "text-red-500" : "text-slate-400"
+                charCount > 3000 ? "text-red-300" : "text-slate-300/80"
               }`}
             >
               {charCount} / 3,000 characters

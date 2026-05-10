@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 import { generateCompletion, parseJSON } from "@/lib/openrouter";
 import {
   BusinessData,
@@ -21,6 +22,58 @@ export async function POST(req: Request) {
   try {
     const body: ContentRequest = await req.json();
     const { businessData, selectedICP, pillars, customizationAnswers, selectedStyles } = body;
+
+    let businessId: string | undefined;
+
+    if (selectedICP.dbId) {
+      const { data: icpRow, error: icpLookupError } = await supabase
+        .from("icps")
+        .select("business_id")
+        .eq("id", selectedICP.dbId)
+        .maybeSingle();
+      if (icpLookupError) {
+        console.error("Business style ICP lookup error:", icpLookupError);
+      }
+      businessId = icpRow?.business_id;
+    }
+
+    if (!businessId) {
+      const { data: businessRow, error: businessLookupError } = await supabase
+        .from("businesses")
+        .select("id")
+        .eq("business_name", businessData.businessName)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (businessLookupError) {
+        console.error("Business style business lookup error:", businessLookupError);
+      }
+      businessId = businessRow?.id;
+    }
+
+    if (businessId) {
+      const { error: deleteStyleError } = await supabase
+        .from("business_styles")
+        .delete()
+        .eq("business_id", businessId);
+      if (deleteStyleError) {
+        console.error("Business styles clear error:", deleteStyleError);
+      }
+
+      if (selectedStyles.length > 0) {
+        const styleRows = selectedStyles.map((style) => ({
+          business_id: businessId,
+          style_id: style.id,
+        }));
+
+        const { error: saveStyleError } = await supabase.from("business_styles").insert(styleRows);
+        if (saveStyleError) {
+          console.error("Business styles insert error:", saveStyleError);
+        }
+      }
+    } else {
+      console.error("Skipping business_styles save: business id not found.");
+    }
 
     const styleGuide = selectedStyles
       .map(
@@ -88,6 +141,28 @@ Generate 3 LinkedIn posts, each covering a different topic from the pillars abov
       ...c,
       id: `content-${i + 1}`,
     }));
+
+    if (businessId) {
+      const creatorStyleId = selectedStyles.length === 1 ? selectedStyles[0].id : null;
+      const contentRows = contentWithIds.map((item, index) => ({
+        business_id: businessId,
+        version: index + 1,
+        hook: item.hook,
+        body: item.body,
+        cta: item.cta,
+        creator_style_id: creatorStyleId,
+      }));
+
+      const { error: contentSaveError } = await supabase
+        .from("generated_contents")
+        .insert(contentRows);
+
+      if (contentSaveError) {
+        console.error("Generated contents insert error:", contentSaveError);
+      }
+    } else {
+      console.error("Skipping generated_contents save: business id not found.");
+    }
 
     return NextResponse.json({ content: contentWithIds });
   } catch (error) {

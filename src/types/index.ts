@@ -9,6 +9,7 @@ export interface BusinessData {
 
 export interface ICP {
   id: string;
+  dbId?: string;
   name: string;
   title: string;
   demographics: string;

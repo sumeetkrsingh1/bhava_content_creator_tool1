@@ -35,7 +35,8 @@ const questions = [
 ];
 
 export default function CustomizeQuestions() {
-  const { dispatch } = useWizard();
+  const { state, dispatch } = useWizard();
+  const [isSaving, setIsSaving] = useState(false);
   const [answers, setAnswers] = useState<CustomizationAnswers>({
     brandPersonality: "",
     audienceEmotion: "",
@@ -43,18 +44,55 @@ export default function CustomizeQuestions() {
     uniquePerspective: "",
   });
 
+  const DEFAULT_ANSWERS: CustomizationAnswers = {
+    brandPersonality: "Professional yet approachable and trustworthy.",
+    audienceEmotion: "Confident, informed, and ready to take action.",
+    communicationStyle: "Clear, practical, and conversational.",
+    uniquePerspective: "Experience-backed insights with actionable takeaways.",
+  };
+
   const updateAnswer = (key: keyof CustomizationAnswers, value: string) => {
     setAnswers((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleContinue = () => {
-    dispatch({ type: "SET_CUSTOMIZATION", payload: answers });
-    dispatch({ type: "SET_STEP", payload: 6 });
+  const withDefaults = (input: CustomizationAnswers): CustomizationAnswers => ({
+    brandPersonality: input.brandPersonality.trim() || DEFAULT_ANSWERS.brandPersonality,
+    audienceEmotion: input.audienceEmotion.trim() || DEFAULT_ANSWERS.audienceEmotion,
+    communicationStyle: input.communicationStyle.trim() || DEFAULT_ANSWERS.communicationStyle,
+    uniquePerspective: input.uniquePerspective.trim() || DEFAULT_ANSWERS.uniquePerspective,
+  });
+
+  const saveCustomization = async (finalAnswers: CustomizationAnswers) => {
+    try {
+      await fetch("/api/save-customization", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessData: state.businessData,
+          selectedICP: state.selectedICP,
+          answers: finalAnswers,
+        }),
+      });
+    } catch {
+      // Non-blocking persistence: user should still proceed in wizard flow.
+    }
   };
 
-  const handleSkip = () => {
-    dispatch({ type: "SET_CUSTOMIZATION", payload: null });
+  const handleContinue = async () => {
+    const finalAnswers = withDefaults(answers);
+    setIsSaving(true);
+    await saveCustomization(finalAnswers);
+    dispatch({ type: "SET_CUSTOMIZATION", payload: finalAnswers });
     dispatch({ type: "SET_STEP", payload: 6 });
+    setIsSaving(false);
+  };
+
+  const handleSkip = async () => {
+    setIsSaving(true);
+    await saveCustomization(DEFAULT_ANSWERS);
+    dispatch({ type: "SET_CUSTOMIZATION", payload: DEFAULT_ANSWERS });
+    dispatch({ type: "SET_STEP", payload: 6 });
+    setIsSaving(false);
   };
 
   return (
@@ -62,11 +100,11 @@ export default function CustomizeQuestions() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Palette className="w-7 h-7 text-brand-accent" />
-          <h2 className="text-2xl font-bold text-slate-800">Customizing Your Content</h2>
+          <h2 className="text-3xl font-semibold tracking-tight text-white">Customizing Your Content</h2>
         </div>
-        <p className="text-slate-500">
+        <p className="text-slate-200/80">
           Answer these questions to help us craft content that matches your brand voice.
-          <span className="text-slate-400 ml-1">(Optional - you can skip this step)</span>
+          <span className="text-slate-300/80 ml-1">(Optional - you can skip this step)</span>
         </p>
       </div>
 
@@ -83,11 +121,11 @@ export default function CustomizeQuestions() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Button variant="ghost" size="lg" onClick={handleSkip}>
+        <Button variant="ghost" size="lg" onClick={handleSkip} disabled={isSaving}>
           <SkipForward className="w-5 h-5 mr-2" />
           Skip
         </Button>
-        <Button size="lg" onClick={handleContinue}>
+        <Button size="lg" onClick={handleContinue} loading={isSaving} disabled={isSaving}>
           Continue
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>

@@ -61,8 +61,8 @@ export default function BusinessForm() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-800">Tell us about your business</h2>
-        <p className="text-slate-500 mt-1">
+        <h2 className="text-3xl font-semibold tracking-tight text-white">Tell us about your business</h2>
+        <p className="mt-2 text-slate-200/80">
           We&apos;ll use this to create your ideal customer profiles and content strategy.
         </p>
       </div>

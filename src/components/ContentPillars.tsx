@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, Lightbulb, Check } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -11,20 +11,24 @@ export default function ContentPillars() {
   const [expandedPillar, setExpandedPillar] = useState<string | null>(
     state.pillars[0]?.id || null
   );
+  const [selectedPillar, setSelectedPillar] = useState<string | null>(
+    state.pillars[0]?.id || null
+  );
 
   if (state.isLoading) {
     return <LoadingSpinner message="Crafting your content strategy..." />;
   }
 
   const togglePillar = (id: string) => {
+    setSelectedPillar(id);
     setExpandedPillar(expandedPillar === id ? null : id);
   };
 
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-800">Your Content Pillars</h2>
-        <p className="text-slate-500 mt-1">
+        <h2 className="text-3xl font-semibold tracking-tight text-white">Your Content Pillars</h2>
+        <p className="mt-2 text-slate-200/80">
           These pillars form the foundation of your LinkedIn content strategy. Each includes
           topic ideas to get you started.
         </p>
@@ -34,39 +38,46 @@ export default function ContentPillars() {
         {state.pillars.map((pillar, index) => (
           <div
             key={pillar.id}
-            className="bg-white rounded-xl border-2 border-slate-200 overflow-hidden transition-all duration-200 hover:border-slate-300"
+            className="rounded-2xl border border-white/20 bg-white/10 overflow-hidden transition-all duration-200 hover:border-white/35"
           >
             <button
               onClick={() => togglePillar(pillar.id)}
               className="w-full px-6 py-4 flex items-center justify-between text-left"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-sm">
+                <div className="w-8 h-8 rounded-lg bg-cyan-200/20 flex items-center justify-center text-cyan-100 font-bold text-sm border border-cyan-100/35">
                   {index + 1}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-slate-800">{pillar.name}</h3>
-                  <p className="text-sm text-slate-500">{pillar.description}</p>
+                <div className="flex items-start gap-3">
+                  <div>
+                    <h3 className="font-semibold text-white">{pillar.name}</h3>
+                    <p className="text-sm text-slate-200/80">{pillar.description}</p>
+                  </div>
+                  {selectedPillar === pillar.id && (
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
                 </div>
               </div>
               {expandedPillar === pillar.id ? (
-                <ChevronUp className="w-5 h-5 text-slate-400" />
+                <ChevronUp className="w-5 h-5 text-slate-300" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-slate-400" />
+                <ChevronDown className="w-5 h-5 text-slate-300" />
               )}
             </button>
 
             {expandedPillar === pillar.id && (
-              <div className="px-6 pb-5 border-t border-slate-100 pt-4 space-y-3">
+              <div className="px-6 pb-5 border-t border-white/15 pt-4 space-y-3">
                 {pillar.topics.map((topic) => (
                   <div
                     key={topic.id}
-                    className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg"
+                    className="flex items-start gap-3 p-3 bg-white/10 rounded-lg border border-white/15"
                   >
                     <Lightbulb className="w-5 h-5 text-brand-accent mt-0.5 shrink-0" />
                     <div>
-                      <h4 className="font-medium text-slate-800 text-sm">{topic.title}</h4>
-                      <p className="text-sm text-slate-500 mt-0.5">{topic.description}</p>
+                      <h4 className="font-medium text-slate-100 text-sm">{topic.title}</h4>
+                      <p className="text-sm text-slate-200/75 mt-0.5">{topic.description}</p>
                     </div>
                   </div>
                 ))}

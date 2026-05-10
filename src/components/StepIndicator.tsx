@@ -28,17 +28,17 @@ export default function StepIndicator() {
                 <div
                   className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
                     isCompleted
-                      ? "bg-emerald-500 text-white"
+                      ? "bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-lg shadow-emerald-400/30"
                       : isCurrent
-                      ? "bg-brand-primary text-white ring-4 ring-brand-primary/20"
-                      : "bg-slate-200 text-slate-500"
+                      ? "bg-gradient-to-r from-cyan-400 to-blue-400 text-slate-950 ring-4 ring-cyan-400/40 shadow-lg shadow-cyan-400/30"
+                      : "bg-gradient-to-r from-slate-700/50 to-slate-800/50 text-slate-300 border border-cyan-500/20"
                   }`}
                 >
                   {isCompleted ? <Check className="w-5 h-5" /> : step.num - 1}
                 </div>
                 <span
                   className={`mt-1.5 text-xs font-medium hidden sm:block ${
-                    isCurrent ? "text-brand-primary" : "text-slate-500"
+                    isCurrent ? "text-cyan-300 font-semibold" : "text-slate-400/80"
                   }`}
                 >
                   {step.label}
@@ -47,7 +47,7 @@ export default function StepIndicator() {
               {i < steps.length - 1 && (
                 <div
                   className={`flex-1 h-0.5 mx-2 transition-colors duration-300 ${
-                    state.currentStep > step.num ? "bg-emerald-500" : "bg-slate-200"
+                    state.currentStep > step.num ? "bg-gradient-to-r from-emerald-400 to-teal-400" : "bg-cyan-500/20"
                   }`}
                 />
               )}
