@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { BusinessData, ICP, ContentPillar, CustomizationAnswers, CreatorStyle, GeneratedContent } from '@/types';
 
+type BusinessStyleRow = {
+  style_id: string;
+};
+
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = await params;
   const { searchParams } = new URL(req.url);
@@ -37,7 +41,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   ]);
 
   // Resolve styles
-  const styleIds = (styles as any[]).map((s) => s.style_id);
+  const styleIds = ((styles || []) as BusinessStyleRow[]).map((s) => s.style_id);
   const { data: styleDetails } = await supabase.from('creator_styles').select('*').in('id', styleIds);
 
   const response = {

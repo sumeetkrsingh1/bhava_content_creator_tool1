@@ -74,10 +74,10 @@ export default function CreatorStylePicker() {
     state.selectedStyles.some((s) => s.id === id);
 
   return (
-    <div className="max-w-4xl mx-auto premium-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden">
+    <div className="max-w-4xl mx-auto premium-glass p-8 md:p-12 rounded-lg relative overflow-hidden">
       {/* Decorative blurred blobs for depth */}
-      <div className="absolute -top-32 -left-32 w-64 h-64 bg-purple-400/20 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-64 h-64 bg-brand-primary/18 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#00d2ff]/18 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="mb-10 text-center relative z-10">
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gradient mb-3">
@@ -102,7 +102,7 @@ export default function CreatorStylePicker() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-200/50 border border-purple-300/50 flex items-center justify-center text-purple-800 font-bold text-sm">
+                  <div className="w-10 h-10 rounded-full bg-brand-layer6/60 border border-brand-layer3/50 flex items-center justify-center text-brand-dark font-bold text-sm">
                     {style.avatar}
                   </div>
                   <div>
@@ -123,14 +123,14 @@ export default function CreatorStylePicker() {
                 {style.styleTags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-0.5 bg-amber-100/60 border border-amber-300/60 text-amber-900 text-xs rounded-full font-medium"
+                    className="px-2 py-0.5 bg-brand-layer6/60 border border-brand-layer3/50 text-brand-dark text-xs rounded-full font-medium"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
 
-              <div className="bg-white/50 rounded-lg p-3 border border-purple-200/50 shadow-sm">
+              <div className="bg-white/55 rounded-lg p-3 border border-brand-layer5/60 shadow-sm dark:border-brand-layer3/25 dark:bg-brand-deep/45">
                 <p className="text-xs text-secondary mb-1 font-medium">Sample style:</p>
                 <p className="text-sm text-primary whitespace-pre-line leading-relaxed">
                   {style.sampleSnippet}
@@ -145,12 +145,12 @@ export default function CreatorStylePicker() {
       <div className="mt-8 flex justify-end relative z-10">
         <Button
           size="lg"
-          className="text-lg shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-shadow duration-300"
+          className="text-lg"
           onClick={handleGenerate}
           disabled={state.selectedStyles.length === 0}
           loading={state.isLoading}
         >
-          <span className="font-semibold mr-2">✨</span>
+          <span className="font-semibold mr-2">AI</span>
           Generate Content
         </Button>
       </div>

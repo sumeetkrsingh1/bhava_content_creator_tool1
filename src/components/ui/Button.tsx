@@ -11,17 +11,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants = {
   primary:
-    "border border-purple-400/50 bg-gradient-to-r from-purple-500/60 to-blue-600/60 text-white shadow-[0_0_20px_rgba(168,85,247,0.25)] hover:from-purple-500/70 hover:to-blue-600/70 hover:shadow-[0_0_30px_rgba(168,85,247,0.35)]",
+    "border border-brand-primary bg-[#2f74ea] text-white shadow-[0_20px_44px_rgba(42,111,227,0.22)] hover:border-[#0050ff] hover:bg-[#0050ff] hover:shadow-[0_24px_52px_rgba(42,111,227,0.28)]",
   secondary:
-    "border border-purple-400/40 bg-gradient-to-r from-purple-100/80 to-blue-100/80 text-purple-900 shadow-[0_0_15px_rgba(168,85,247,0.12)] hover:border-purple-400/60 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)]",
-  outline: "border border-purple-400/40 text-purple-700 bg-purple-100/30 hover:bg-purple-100/50 hover:border-purple-400/60",
-  ghost: "text-slate-700 hover:bg-purple-100/30 hover:text-purple-700",
+    "border border-brand-primary bg-white/80 text-brand-primary shadow-[0_14px_30px_rgba(42,111,227,0.1)] hover:bg-brand-primary hover:text-white hover:shadow-[0_18px_38px_rgba(42,111,227,0.18)] dark:bg-white/8 dark:text-brand-star dark:hover:bg-brand-primary",
+  outline: "border border-brand-primary/60 bg-transparent text-brand-primary hover:border-brand-primary hover:bg-brand-primary/10 hover:text-brand-primary hover:shadow-[0_18px_40px_rgba(42,111,227,0.18)] hover:-translate-y-0.5 dark:text-brand-star dark:hover:bg-brand-primary/20 dark:hover:text-brand-star",
+  ghost: "border border-transparent bg-transparent text-slate-700 hover:border-brand-primary/30 hover:bg-white/55 hover:text-brand-primary hover:shadow-[0_12px_24px_rgba(15,23,42,0.16)] hover:-translate-y-0.5 dark:text-brand-star/80 dark:hover:bg-white/10 dark:hover:text-brand-star",
 };
 
 const sizes = {
-  sm: "px-3.5 py-2 text-sm",
-  md: "px-5 py-2.5 text-base",
-  lg: "px-8 py-3 text-base md:text-lg",
+  sm: "px-5 py-2 text-sm",
+  md: "px-7 py-3 text-base",
+  lg: "px-10 py-4 text-base md:text-lg",
 };
 
 export default function Button({
@@ -35,7 +35,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-xl font-semibold tracking-tight transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-full font-bold tracking-tight transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none ${variants[variant]} ${sizes[size]} ${className}`}
       disabled={disabled || loading}
       {...props}
     >

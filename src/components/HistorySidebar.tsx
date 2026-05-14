@@ -9,6 +9,7 @@ interface HistorySidebarProps {
 
 export default function HistorySidebar({ isOpen = true, onClose }: HistorySidebarProps) {
   const [sessions, setSessions] = useState<Array<{ id: string; title: string; created_at: string }>>([]);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const { dispatch } = useWizard();
 
   useEffect(() => {
@@ -31,6 +32,8 @@ export default function HistorySidebar({ isOpen = true, onClose }: HistorySideba
       alert('User not authenticated');
       return;
     }
+
+    setSelectedSessionId(sessionId);
 
     const res = await fetch(`/api/history/${sessionId}?userId=${user.id}`);
     if (!res.ok) {
@@ -56,21 +59,24 @@ export default function HistorySidebar({ isOpen = true, onClose }: HistorySideba
   return (
     <>
       {/* Desktop Sidebar - Fixed Position */}
-      <div className="hidden md:fixed md:block md:left-0 md:top-16 md:h-[calc(100vh-4rem)] md:w-64 bg-white/10 backdrop-blur-md border-r border-white/20 p-4 overflow-y-auto z-10">
-        <h3 className="text-lg font-semibold mb-4 text-white">History</h3>
+      <div className="hidden md:fixed md:block md:left-0 md:top-16 md:h-[calc(100vh-4rem)] md:w-64 bg-white/70 backdrop-blur-md border-r border-brand-layer5/45 p-4 overflow-y-auto z-10 dark:border-brand-layer3/20 dark:bg-[#060B14]/92">
+        <h3 className="text-lg font-semibold mb-4 text-brand-dark dark:text-brand-star">History</h3>
         {sessions.length === 0 ? (
-          <p className="text-gray-400 text-sm">No sessions yet</p>
+          <p className="text-slate-500 text-sm dark:text-brand-star/55">No sessions yet</p>
         ) : (
-          sessions.map((s) => (
-            <button
-              key={s.id}
-              className="w-full text-left py-2 px-2 rounded hover:bg-white/20 transition-colors duration-200"
-              onClick={() => loadSession(s.id)}
-            >
-              <div className="font-medium text-white">{s.title || 'Untitled'}</div>
-              <div className="text-sm text-gray-400">{new Date(s.created_at).toLocaleDateString()}</div>
-            </button>
-          ))
+          sessions.map((s) => {
+            const isSelected = selectedSessionId === s.id;
+            return (
+              <button
+                key={s.id}
+                className={`w-full text-left py-2 px-2 rounded-lg transition-colors duration-200 ${isSelected ? 'bg-brand-primary/20 text-brand-primary border border-brand-primary/30 shadow-sm shadow-brand-primary/10 dark:bg-brand-primary/10 dark:text-brand-star dark:border-brand-primary/40' : 'hover:bg-brand-primary/10 dark:hover:bg-white/10'}`}
+                onClick={() => loadSession(s.id)}
+              >
+                <div className="font-medium text-brand-dark dark:text-brand-star">{s.title || 'Untitled'}</div>
+                <div className="text-sm text-slate-500 dark:text-brand-star/55">{new Date(s.created_at).toLocaleDateString()}</div>
+              </button>
+            );
+          })
         )}
       </div>
 
@@ -81,21 +87,24 @@ export default function HistorySidebar({ isOpen = true, onClose }: HistorySideba
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
           
           {/* Sidebar */}
-          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white/10 backdrop-blur-md border-r border-white/20 p-4 overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4 text-white">Sessions</h3>
+          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white/90 backdrop-blur-md border-r border-brand-layer5/45 p-4 overflow-y-auto dark:border-brand-layer3/20 dark:bg-[#060B14]/95">
+            <h3 className="text-lg font-semibold mb-4 text-brand-dark dark:text-brand-star">Sessions</h3>
             {sessions.length === 0 ? (
-              <p className="text-gray-400 text-sm">No sessions yet</p>
+              <p className="text-slate-500 text-sm dark:text-brand-star/55">No sessions yet</p>
             ) : (
-              sessions.map((s) => (
-                <button
-                  key={s.id}
-                  className="w-full text-left py-2 px-2 rounded hover:bg-white/20 transition-colors duration-200"
-                  onClick={() => loadSession(s.id)}
-                >
-                  <div className="font-medium text-white">{s.title || 'Untitled'}</div>
-                  <div className="text-sm text-gray-400">{new Date(s.created_at).toLocaleDateString()}</div>
-                </button>
-              ))
+              sessions.map((s) => {
+                const isSelected = selectedSessionId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    className={`w-full text-left py-2 px-2 rounded-lg transition-colors duration-200 ${isSelected ? 'bg-brand-primary/20 text-brand-primary border border-brand-primary/30 shadow-sm shadow-brand-primary/10 dark:bg-brand-primary/10 dark:text-brand-star dark:border-brand-primary/40' : 'hover:bg-brand-primary/10 dark:hover:bg-white/10'}`}
+                    onClick={() => loadSession(s.id)}
+                  >
+                    <div className="font-medium text-brand-dark dark:text-brand-star">{s.title || 'Untitled'}</div>
+                    <div className="text-sm text-slate-500 dark:text-brand-star/55">{new Date(s.created_at).toLocaleDateString()}</div>
+                  </button>
+                );
+              })
             )}
           </div>
         </div>

@@ -96,14 +96,14 @@ export default function CustomizeQuestions() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto premium-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden">
+    <div className="max-w-2xl mx-auto premium-glass p-8 md:p-12 rounded-lg relative overflow-hidden">
       {/* Decorative blurred blobs for depth */}
-      <div className="absolute -top-32 -left-32 w-64 h-64 bg-purple-400/20 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-64 h-64 bg-brand-primary/18 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#00d2ff]/18 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="mb-10 text-center relative z-10">
         <div className="flex items-center justify-center gap-3 mb-2">
-          <Palette className="w-8 h-8 text-brand-accent" />
+          <Palette className="w-8 h-8 text-brand-primary" />
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gradient">Customizing Your Content</h2>
         </div>
         <p className="text-secondary text-lg">
@@ -129,7 +129,7 @@ export default function CustomizeQuestions() {
           <SkipForward className="w-5 h-5 mr-2" />
           Skip
         </Button>
-        <Button size="lg" className="text-lg shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-shadow duration-300" onClick={handleContinue} loading={isSaving} disabled={isSaving}>
+        <Button size="lg" className="text-lg" onClick={handleContinue} loading={isSaving} disabled={isSaving}>
           Continue
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>

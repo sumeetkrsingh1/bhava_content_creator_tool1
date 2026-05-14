@@ -171,6 +171,7 @@ Topics:
     const result = await generateCompletion(systemPrompt, userPrompt, {
       temperature: 0.9,
       maxTokens: 3000,
+      label: "Content generation",
     });
 
     const content = parseJSON<Omit<GeneratedContent, "id">[]>(result);
@@ -210,7 +211,7 @@ Topics:
       );
     }
 
-    // ✅ FIXED generation session creation
+    // Fixed generation session creation.
     if (userId && businessId) {
       const { data: sessionData, error: sessionError } = await supabase
         .from("generation_sessions")

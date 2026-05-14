@@ -3,6 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import LogoutButton from "@/app/dashboard/LogoutButton";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface NavbarProps {
   onMenuToggle: (isOpen: boolean) => void;
@@ -16,42 +17,27 @@ export default function Navbar({ onMenuToggle, userName, isMenuOpen }: NavbarPro
   };
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/10 backdrop-blur-md border-b border-white/20">
+    <nav className="sticky top-0 z-40 border-b border-brand-layer5/40 bg-white/82 shadow-[0_8px_32px_rgba(31,38,135,0.08)] backdrop-blur-md dark:border-brand-layer3/20 dark:bg-[#060B14]/95 dark:shadow-[0_8px_32px_rgba(0,0,0,0.34)]">
       <div className="flex items-center justify-between px-6 py-4">
-        {/* Hamburger Menu */}
-        <button
-          onClick={handleMenuToggle}
-          className="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? (
-            <X className="w-6 h-6 text-white" />
-          ) : (
-            <Menu className="w-6 h-6 text-white" />
-          )}
-        </button>
-
         {/* Logo/Title */}
-        <div className="flex items-center gap-2 ">
+        <div className="flex items-center">
           <Image
-            src="/brandBhavaLogo.png"
+            src="/brandBhavaLogo-transparent.png"
             alt="Brand Bhava"
-            width={120}
-            height={32}
-            className="w-10  scale-800 "
+            width={32}
+            height={12}
+            className="w-10 h-auto object-contain"
           />
-          {/* <span className="text-white font-semibold hidden sm:inline">
-            Brand Bhava
-          </span> */}
         </div>
 
         {/* User Info and Logout */}
         <div className="flex items-center gap-4">
           {userName && (
-            <span className="text-sm text-gray-300 hidden sm:inline">
+            <span className="text-sm text-slate-600 hidden sm:inline dark:text-brand-star/80">
               Welcome, {userName}
             </span>
           )}
+          <ThemeToggle />
           <LogoutButton />
         </div>
       </div>

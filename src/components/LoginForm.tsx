@@ -17,19 +17,19 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-brand-primary to-slate-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(135deg,#F8F9FC,#FFFFFF)] px-4 dark:bg-gradient-to-br dark:from-brand-deep dark:via-brand-dark dark:to-brand-deep">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-accent/20 mb-4">
-            <span className="text-3xl font-bold text-brand-accent">B</span>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-brand-primary/20 mb-4">
+            <span className="text-3xl font-bold text-brand-star">B</span>
           </div>
-          <h1 className="text-3xl font-bold text-white">Brand Bhava</h1>
-          <p className="text-slate-300 mt-2">Create LinkedIn content that resonates</p>
+          <h1 className="text-3xl font-bold text-primary">Brand Bhava</h1>
+          <p className="text-secondary mt-2">Create LinkedIn content that resonates</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-2xl p-8 space-y-5"
+          className="bg-white rounded-lg shadow-2xl p-8 space-y-5 dark:bg-brand-dark/82"
         >
           <h2 className="text-xl font-semibold text-slate-800 text-center">
             Sign in to your account
@@ -61,7 +61,7 @@ export default function LoginForm() {
             <button
               type="button"
               onClick={() => router.push("/dashboard")}
-              className="text-brand-primary font-medium hover:underline"
+              className="rounded-full px-2 py-1 font-bold text-brand-primary transition hover:bg-brand-primary/10"
             >
               Get started
             </button>

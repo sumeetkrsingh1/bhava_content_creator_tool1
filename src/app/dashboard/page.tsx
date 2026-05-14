@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import { WizardProvider, useWizard } from '@/context/WizardContext';
@@ -81,14 +80,14 @@ function WizardContent({ userName, isSidebarOpen, onMenuToggle }: { userName: st
 
             {/* Step Indicator */}
             <div className="relative z-10 mx-auto mt-8 max-w-6xl px-6">
-              <div className="premium-glass rounded-2xl px-4 md:px-8">
+              <div className="premium-glass rounded-lg px-4 md:px-8">
                 <StepIndicator />
               </div>
             </div>
 
             {/* Step Content */}
             <main className="relative z-10 mx-auto max-w-6xl px-6 pb-20 pt-8">
-              <section className="premium-glass rounded-3xl p-6 md:p-10">
+              <section className="premium-glass rounded-lg p-6 md:p-10">
                 {stepComponents[state.currentStep] || <BusinessForm />}
               </section>
             </main>

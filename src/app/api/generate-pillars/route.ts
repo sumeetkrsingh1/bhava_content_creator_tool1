@@ -28,7 +28,9 @@ Target ICP: ${selectedICP.name} - ${selectedICP.title}
 ICP Pain Points: ${selectedICP.painPoints.join(", ")}
 ICP Goals: ${selectedICP.goals.join(", ")}`;
 
-    const result = await generateCompletion(systemPrompt, userPrompt);
+    const result = await generateCompletion(systemPrompt, userPrompt, {
+      label: "Pillars generation",
+    });
     const pillars = parseJSON<Omit<ContentPillar, "id" | "topics">[]>(result);
 
     const pillarsWithIds: ContentPillar[] = pillars.map((pillar, i) => ({

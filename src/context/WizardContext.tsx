@@ -4,6 +4,7 @@ import { createContext, useContext, useReducer, ReactNode } from "react";
 import { WizardState, WizardAction, CreatorStyle } from "@/types";
 
 const initialState: WizardState = {
+  currentStep: 2,
   businessId: null,
   businessData: null,
   icps: [],

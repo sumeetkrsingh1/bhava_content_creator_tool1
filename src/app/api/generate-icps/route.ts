@@ -44,7 +44,9 @@ Product/Service: ${body.productService}
 Business Goals: ${body.businessGoals}
 Unique Selling Points: ${body.uniqueSellingPoints}`;
 
-    const result = await generateCompletion(systemPrompt, userPrompt);
+    const result = await generateCompletion(systemPrompt, userPrompt, {
+      label: "ICP generation",
+    });
     const icps = parseJSON<Omit<ICP, "id">[]>(result);
 
     const icpsWithIds: ICP[] = icps.map((icp, i) => ({

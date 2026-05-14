@@ -17,8 +17,14 @@ export function parseJSON<T>(text: string): T {
 export async function generateCompletion(
   systemPrompt: string,
   userPrompt: string,
-  options?: { temperature?: number; maxTokens?: number }
+  options?: { temperature?: number; maxTokens?: number; label?: string }
 ): Promise<string> {
+  if (options?.label) {
+    console.log("[OpenRouter Prompt] step:", options.label);
+  }
+  console.log("[OpenRouter Prompt] systemPrompt:\n", systemPrompt);
+  console.log("[OpenRouter Prompt] userPrompt:\n", userPrompt);
+
   const response = await client.chat.completions.create({
     model: process.env.OPENROUTER_MODEL || "openai/gpt-4o",
     messages: [

@@ -8,10 +8,5 @@ export default function BackgroundWrapper() {
 
   if (isAuthPage) return null;
 
-  return (
-    <div
-      className="fixed inset-0 -z-50 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: 'url("/uiBackground.png")' }}
-    />
-  );
+  return <div className="app-background fixed inset-0 -z-50" />;
 }

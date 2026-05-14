@@ -38,7 +38,7 @@ export default function ContentPillars() {
         {state.pillars.map((pillar, index) => (
           <div
             key={pillar.id}
-            className="rounded-2xl border border-white/20 bg-white/10 overflow-hidden transition-all duration-200 hover:border-white/35"
+            className="rounded-lg border border-brand-layer5/45 bg-white/35 overflow-hidden transition-all duration-200 hover:border-brand-layer3/60 dark:border-brand-layer3/25 dark:bg-brand-dark/45"
           >
             <button
               onClick={() => togglePillar(pillar.id)}
@@ -72,9 +72,9 @@ export default function ContentPillars() {
                 {pillar.topics.map((topic) => (
                   <div
                     key={topic.id}
-                    className="flex items-start gap-3 p-3 bg-white/10 rounded-lg border border-white/15"
+                    className="flex items-start gap-3 p-3 bg-white/35 rounded-lg border border-brand-layer5/30 dark:bg-white/5 dark:border-brand-layer3/20"
                   >
-                    <Lightbulb className="w-5 h-5 text-brand-accent mt-0.5 shrink-0" />
+                    <Lightbulb className="w-5 h-5 text-[#ffaa00] mt-0.5 shrink-0" />
                     <div>
                       <h4 className="font-medium text-primary text-sm">{topic.title}</h4>
                       <p className="text-sm text-secondary mt-0.5">{topic.description}</p>

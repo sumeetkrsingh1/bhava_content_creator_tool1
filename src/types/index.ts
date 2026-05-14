@@ -59,6 +59,7 @@ export interface WizardState {
   currentStep: number;
   businessData: BusinessData | null;
   businessId: string | null;
+  icps: ICP[];
   selectedICP: ICP | null;
   pillars: ContentPillar[];
   customizationAnswers: CustomizationAnswers | null;
@@ -69,6 +70,7 @@ export interface WizardState {
 
 export type WizardAction =
   | { type: "SET_BUSINESS_ID"; payload: string }
+  | { type: "SET_STEP"; payload: number }
   | { type: "SET_BUSINESS_DATA"; payload: BusinessData }
   | { type: "SET_ICPS"; payload: ICP[] }
   | { type: "SELECT_ICP"; payload: ICP }
@@ -77,4 +79,5 @@ export type WizardAction =
   | { type: "TOGGLE_STYLE"; payload: CreatorStyle }
   | { type: "SET_CONTENT"; payload: GeneratedContent[] }
   | { type: "SET_LOADING"; payload: boolean }
+  | { type: "RESET" }
   | { type: "SET_FULL_SESSION"; payload: Partial<WizardState> }

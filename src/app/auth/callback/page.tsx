@@ -34,9 +34,9 @@ function AuthCallbackContent() {
   }, [router, searchParams]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#dfe3f1] px-6">
-      <div className="rounded-2xl border border-slate-200 bg-white/85 p-8 text-center shadow-2xl backdrop-blur-xl">
-        <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-[#5637ed]" />
+    <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#F8F9FC,#FFFFFF)] px-6">
+      <div className="rounded-lg border border-brand-layer5/70 bg-white/85 p-8 text-center shadow-2xl backdrop-blur-xl">
+        <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-brand-primary" />
         <p className="text-sm font-medium text-slate-700">{status}</p>
       </div>
     </div>
@@ -47,9 +47,9 @@ export default function AuthCallbackPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#dfe3f1] px-6">
-          <div className="rounded-2xl border border-slate-200 bg-white/85 p-8 text-center shadow-2xl backdrop-blur-xl">
-            <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-[#5637ed]" />
+        <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#F8F9FC,#FFFFFF)] px-6">
+          <div className="rounded-lg border border-brand-layer5/70 bg-white/85 p-8 text-center shadow-2xl backdrop-blur-xl">
+            <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-brand-primary" />
             <p className="text-sm font-medium text-slate-700">Verifying your session...</p>
           </div>
         </div>

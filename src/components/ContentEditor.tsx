@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Copy, RefreshCw, RotateCcw, Check, FileText } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
 import { supabase } from "@/lib/supabase";
@@ -14,17 +14,21 @@ export default function ContentEditor() {
   const [copied, setCopied] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
 
-  if (state.isLoading && state.generatedContent.length === 0) {
-    return <LoadingSpinner message="Creating your LinkedIn content..." />;
-  }
+  useEffect(() => {
+    if (state.generatedContent.length === 0) {
+      setEditedContent([]);
+      return;
+    }
 
-  // Initialize edited content from generated content
-  if (editedContent.length === 0 && state.generatedContent.length > 0) {
     const initial = state.generatedContent.map(
       (c) => `${c.hook}\n\n${c.body}\n\n${c.cta}`
     );
     setEditedContent(initial);
-    return null;
+    setActiveTab(0);
+  }, [state.generatedContent]);
+
+  if (state.isLoading && state.generatedContent.length === 0) {
+    return <LoadingSpinner message="Creating your LinkedIn content..." />;
   }
 
   const handleCopy = async () => {
@@ -115,10 +119,10 @@ export default function ContentEditor() {
           <button
             key={i}
             onClick={() => setActiveTab(i)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-full border px-5 py-2 text-sm font-bold transition-colors ${
               activeTab === i
-                ? "bg-cyan-200 text-slate-950"
-                : "bg-white/10 text-secondary hover:bg-white/20 border border-white/20"
+                ? "border-brand-primary bg-[#2f74ea] text-white shadow-[0_12px_28px_rgba(42,111,227,0.18)]"
+                : "border-brand-primary/35 bg-white/35 text-brand-primary hover:border-brand-primary hover:bg-white/70 dark:bg-white/8 dark:text-brand-star dark:hover:bg-white/14"
             }`}
           >
             <FileText className="w-4 h-4 inline mr-1.5" />
@@ -128,9 +132,9 @@ export default function ContentEditor() {
       </div>
 
       {/* Editor */}
-      <div className="bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
+      <div className="bg-white/35 rounded-lg border border-brand-layer5/45 overflow-hidden dark:border-brand-layer3/25 dark:bg-brand-dark/45">
         {/* Preview */}
-        <div className="p-6 border-b border-white/15 bg-white/10">
+        <div className="p-6 border-b border-brand-layer5/30 bg-white/10 dark:border-brand-layer3/20 dark:bg-white/5">
           <p className="text-xs text-primary mb-2 font-medium uppercase tracking-wider">
             Preview
           </p>
@@ -144,7 +148,7 @@ export default function ContentEditor() {
           <textarea
             value={editedContent[activeTab]}
             onChange={(e) => updateContent(e.target.value)}
-            className="w-full min-h-[300px] p-4 rounded-lg border border-white/20 bg-slate-950/35 text-slate-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-cyan-200/35 focus:border-cyan-200/60 resize-y"
+            className="w-full min-h-[300px] p-4 rounded-lg border border-brand-layer5/45 bg-white/70 text-brand-dark font-mono text-sm focus:outline-none focus:ring-2 focus:ring-cyan-200/35 focus:border-cyan-200/60 resize-y dark:border-white/20 dark:bg-slate-950/35 dark:text-slate-100"
             placeholder="Edit your content here..."
           />
           <div className="flex items-center justify-between mt-2">

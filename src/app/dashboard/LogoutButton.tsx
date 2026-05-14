@@ -12,7 +12,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-500/10 to-blue-600/10 px-4 py-2 text-sm font-medium text-purple-700 transition hover:border-purple-500/50 hover:bg-gradient-to-r hover:from-purple-500/15 hover:to-blue-600/15 hover:shadow-lg hover:shadow-purple-500/10"
+      className="rounded-full border border-brand-primary/45 bg-white/65 px-5 py-2 text-sm font-bold text-brand-primary shadow-[0_12px_28px_rgba(42,111,227,0.12)] transition hover:border-brand-primary hover:bg-[#2f74ea] hover:text-white dark:border-brand-layer3/35 dark:bg-[#101b2e] dark:text-brand-star dark:shadow-[0_12px_28px_rgba(0,0,0,0.24)] dark:hover:border-brand-layer3 dark:hover:bg-[#2f74ea]"
     >
       Log Out
     </button>

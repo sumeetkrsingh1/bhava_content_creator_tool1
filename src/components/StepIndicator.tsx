@@ -28,10 +28,10 @@ export default function StepIndicator() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ease-out border-2 ${
                     isCompleted
-                      ? "bg-gradient-to-br from-purple-500 to-indigo-500 border-transparent text-white shadow-lg shadow-purple-500/30"
+                      ? "bg-white border-emerald-500 text-emerald-600 shadow-lg shadow-emerald-500/20 dark:bg-brand-deep dark:border-emerald-400 dark:text-emerald-300"
                       : isCurrent
-                      ? "bg-white border-purple-500 text-purple-700 shadow-[0_0_20px_rgba(168,85,247,0.4)] scale-110 ring-4 ring-purple-500/10"
-                      : "bg-white/80 border-slate-200 text-slate-400 backdrop-blur-md"
+                      ? "bg-white border-brand-primary text-brand-primary shadow-[0_0_20px_rgba(42,111,227,0.35)] scale-110 ring-4 ring-brand-primary/10 dark:!bg-black dark:!border-brand-primary dark:!text-white dark:ring-brand-primary/20"
+                      : "bg-white/80 border-slate-200 text-slate-400 backdrop-blur-md dark:bg-brand-star/80 dark:border-brand-star/80 dark:text-brand-dark"
                   }`}
                 >
                   {isCompleted ? <Check className="w-5 h-5 stroke-[3]" /> : step.num - 1}
@@ -39,9 +39,9 @@ export default function StepIndicator() {
                 <span
                   className={`absolute top-14 left-1/2 -translate-x-1/2 w-max text-center text-xs font-semibold transition-all duration-300 hidden md:block ${
                     isCurrent 
-                      ? "text-purple-700 drop-shadow-sm scale-105" 
+                      ? "text-brand-primary drop-shadow-sm scale-105" 
                       : isCompleted 
-                      ? "text-slate-700" 
+                      ? "text-emerald-600 dark:text-emerald-300" 
                       : "text-slate-400"
                   }`}
                 >
@@ -54,7 +54,7 @@ export default function StepIndicator() {
                 <div className="flex-1 h-1.5 mx-2 md:mx-4 rounded-full bg-slate-200/60 overflow-hidden relative z-10">
                   <div 
                     className={`h-full transition-all duration-700 ease-in-out ${
-                      isCompleted ? "w-full bg-gradient-to-r from-purple-500 to-indigo-500" : "w-0"
+                      isCompleted ? "w-full bg-gradient-to-r from-emerald-400 to-emerald-600" : "w-0"
                     }`}
                   />
                 </div>
