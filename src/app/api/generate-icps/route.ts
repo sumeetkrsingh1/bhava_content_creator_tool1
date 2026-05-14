@@ -82,7 +82,8 @@ Unique Selling Points: ${body.uniqueSellingPoints}`;
       }
     }
 
-    return NextResponse.json({ icps: icpsWithIds });
+    const responseBody = { icps: icpsWithIds, businessId };
+    return NextResponse.json(responseBody);
   } catch (error) {
     console.error("ICP generation error:", error);
     return NextResponse.json(

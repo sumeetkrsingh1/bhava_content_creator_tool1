@@ -4,7 +4,7 @@ import { createContext, useContext, useReducer, ReactNode } from "react";
 import { WizardState, WizardAction, CreatorStyle } from "@/types";
 
 const initialState: WizardState = {
-  currentStep: 2,
+  businessId: null,
   businessData: null,
   icps: [],
   selectedICP: null,
@@ -17,6 +17,8 @@ const initialState: WizardState = {
 
 function wizardReducer(state: WizardState, action: WizardAction): WizardState {
   switch (action.type) {
+    case "SET_BUSINESS_ID":
+      return { ...state, businessId: action.payload };
     case "SET_STEP":
       return { ...state, currentStep: action.payload };
     case "SET_BUSINESS_DATA":
@@ -48,6 +50,8 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...state, isLoading: action.payload };
     case "RESET":
       return { ...initialState };
+    case "SET_FULL_SESSION":
+      return { ...state, ...action.payload };
     default:
       return state;
   }

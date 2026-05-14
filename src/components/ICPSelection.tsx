@@ -46,10 +46,13 @@ export default function ICPSelection() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-tight text-white">Choose Your Ideal Customer Profile</h2>
-        <p className="mt-2 text-slate-200/80">
+    <div className="max-w-4xl mx-auto premium-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden">
+      {/* Decorative blurred blobs for depth */}
+      <div className="absolute -top-32 -left-32 w-64 h-64 bg-purple-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="mb-10 text-center relative z-10">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gradient mb-3">Choose Your Ideal Customer Profile</h2>
+        <p className="text-secondary text-lg">
           Select the ICP that best represents your target audience on LinkedIn.
         </p>
       </div>
@@ -65,9 +68,9 @@ export default function ICPSelection() {
               <div>
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-white">{icp.name}</h3>
-                    <p className="text-sm text-cyan-200 font-medium">{icp.title}</p>
-                    <p className="text-sm text-slate-200/80 mt-1">
+                    <h3 className="text-lg font-semibold text-slate-900">{icp.name}</h3>
+                    <p className="text-sm text-purple-700 font-medium">{icp.title}</p>
+                    <p className="text-sm text-slate-600/90 mt-1">
                       {typeof icp.demographics === "string"
                         ? icp.demographics
                         : Object.values(icp.demographics).join(", ")}
@@ -84,12 +87,12 @@ export default function ICPSelection() {
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <Target className="w-4 h-4 text-red-500" />
-                  <span className="text-sm font-semibold text-slate-100">Pain Points</span>
+                  <span className="text-sm font-semibold text-slate-800">Pain Points</span>
                 </div>
                 <ul className="space-y-1">
                   {icp.painPoints.map((p, i) => (
-                    <li key={i} className="text-sm text-slate-200/85 flex items-start gap-1.5">
-                      <span className="text-red-400 mt-0.5">-</span>
+                    <li key={i} className="text-sm text-slate-600/90 flex items-start gap-1.5">
+                      <span className="text-red-500 mt-0.5">-</span>
                       {p}
                     </li>
                   ))}
@@ -99,12 +102,12 @@ export default function ICPSelection() {
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
-                  <span className="text-sm font-semibold text-slate-100">Goals</span>
+                  <span className="text-sm font-semibold text-slate-800">Goals</span>
                 </div>
                 <ul className="space-y-1">
                   {icp.goals.map((g, i) => (
-                    <li key={i} className="text-sm text-slate-200/85 flex items-start gap-1.5">
-                      <span className="text-emerald-400 mt-0.5">-</span>
+                    <li key={i} className="text-sm text-slate-600/90 flex items-start gap-1.5">
+                      <span className="text-emerald-500 mt-0.5">-</span>
                       {g}
                     </li>
                   ))}
@@ -114,13 +117,13 @@ export default function ICPSelection() {
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <Globe className="w-4 h-4 text-blue-500" />
-                  <span className="text-sm font-semibold text-slate-100">Where They Are</span>
+                  <span className="text-sm font-semibold text-slate-800">Where They Are</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {icp.onlinePlatforms.map((p, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 bg-blue-300/20 text-blue-100 text-xs rounded-full border border-blue-200/25"
+                      className="px-2 py-0.5 bg-blue-100/50 text-blue-800 text-xs rounded-full border border-blue-300/50"
                     >
                       {p}
                     </span>
@@ -132,12 +135,13 @@ export default function ICPSelection() {
         ))}
       </div>
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-end relative z-10">
         <Button
           size="lg"
           onClick={handleContinue}
           disabled={!state.selectedICP}
           loading={state.isLoading}
+          className="text-lg shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-shadow duration-300"
         >
           Continue
           <ArrowRight className="w-5 h-5 ml-2" />

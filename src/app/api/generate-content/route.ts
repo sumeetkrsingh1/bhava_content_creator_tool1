@@ -16,46 +16,74 @@ interface ContentRequest {
   pillars: ContentPillar[];
   customizationAnswers: CustomizationAnswers | null;
   selectedStyles: CreatorStyle[];
+  userId: string;
 }
 
 export async function POST(req: Request) {
   try {
     const body: ContentRequest = await req.json();
-    const { businessData, selectedICP, pillars, customizationAnswers, selectedStyles } = body;
+
+    const {
+      businessData,
+      selectedICP,
+      pillars,
+      customizationAnswers,
+      selectedStyles,
+      userId,
+    } = body;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
+    }
 
     let businessId: string | undefined;
 
+    // Get business ID from ICP
     if (selectedICP.dbId) {
       const { data: icpRow, error: icpLookupError } = await supabase
         .from("icps")
         .select("business_id")
         .eq("id", selectedICP.dbId)
         .maybeSingle();
+
       if (icpLookupError) {
         console.error("Business style ICP lookup error:", icpLookupError);
       }
+
       businessId = icpRow?.business_id;
     }
 
+    // Fallback business lookup
     if (!businessId) {
-      const { data: businessRow, error: businessLookupError } = await supabase
-        .from("businesses")
-        .select("id")
-        .eq("business_name", businessData.businessName)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      const { data: businessRow, error: businessLookupError } =
+        await supabase
+          .from("businesses")
+          .select("id")
+          .eq("business_name", businessData.businessName)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
       if (businessLookupError) {
-        console.error("Business style business lookup error:", businessLookupError);
+        console.error(
+          "Business style business lookup error:",
+          businessLookupError
+        );
       }
+
       businessId = businessRow?.id;
     }
 
+    // Save selected creator styles
     if (businessId) {
       const { error: deleteStyleError } = await supabase
         .from("business_styles")
         .delete()
         .eq("business_id", businessId);
+
       if (deleteStyleError) {
         console.error("Business styles clear error:", deleteStyleError);
       }
@@ -66,7 +94,10 @@ export async function POST(req: Request) {
           style_id: style.id,
         }));
 
-        const { error: saveStyleError } = await supabase.from("business_styles").insert(styleRows);
+        const { error: saveStyleError } = await supabase
+          .from("business_styles")
+          .insert(styleRows);
+
         if (saveStyleError) {
           console.error("Business styles insert error:", saveStyleError);
         }
@@ -78,7 +109,9 @@ export async function POST(req: Request) {
     const styleGuide = selectedStyles
       .map(
         (s) =>
-          `- ${s.name}: ${s.description}. Style characteristics: ${s.styleTags.join(", ")}`
+          `- ${s.name}: ${s.description}. Style characteristics: ${s.styleTags.join(
+            ", "
+          )}`
       )
       .join("\n");
 
@@ -105,30 +138,35 @@ ${toneSection}
 Rules:
 - Each post should be 150-250 words
 - Use line breaks for readability (LinkedIn-style formatting)
-- Start with a compelling hook (first 1-2 lines that grab attention)
+- Start with a compelling hook
 - End with a clear call-to-action
 - Do NOT use hashtags
-- Make the content specific and valuable, not generic
+- Make the content specific and valuable
 
-Return ONLY valid JSON - no markdown, no explanation. Return a JSON array with 3 objects, each containing:
-- hook: The opening 1-2 lines (the scroll-stopping hook)
-- body: The main content (multiple paragraphs with line breaks)
-- cta: The closing call-to-action (1-2 lines)
-
-Each variation should take a different angle or topic from the content pillars.`;
+Return ONLY valid JSON array with:
+- hook
+- body
+- cta`;
 
     const userPrompt = `Business: ${businessData.businessName} (${businessData.industryNiche})
-Product/Service: ${businessData.productService}
-USPs: ${businessData.uniqueSellingPoints}
 
-Target Audience: ${selectedICP.name} - ${selectedICP.title}
-Their Pain Points: ${selectedICP.painPoints.join(", ")}
-Their Goals: ${selectedICP.goals.join(", ")}
+Product/Service:
+${businessData.productService}
 
-Content Pillar Topics to draw from:
-- ${pillarTopics}
+USPs:
+${businessData.uniqueSellingPoints}
 
-Generate 3 LinkedIn posts, each covering a different topic from the pillars above.`;
+Target Audience:
+${selectedICP.name} - ${selectedICP.title}
+
+Pain Points:
+${selectedICP.painPoints.join(", ")}
+
+Goals:
+${selectedICP.goals.join(", ")}
+
+Topics:
+- ${pillarTopics}`;
 
     const result = await generateCompletion(systemPrompt, userPrompt, {
       temperature: 0.9,
@@ -142,8 +180,11 @@ Generate 3 LinkedIn posts, each covering a different topic from the pillars abov
       id: `content-${i + 1}`,
     }));
 
+    // Save generated contents
     if (businessId) {
-      const creatorStyleId = selectedStyles.length === 1 ? selectedStyles[0].id : null;
+      const creatorStyleId =
+        selectedStyles.length === 1 ? selectedStyles[0].id : null;
+
       const contentRows = contentWithIds.map((item, index) => ({
         business_id: businessId,
         version: index + 1,
@@ -158,18 +199,66 @@ Generate 3 LinkedIn posts, each covering a different topic from the pillars abov
         .insert(contentRows);
 
       if (contentSaveError) {
-        console.error("Generated contents insert error:", contentSaveError);
+        console.error(
+          "Generated contents insert error:",
+          contentSaveError
+        );
       }
     } else {
-      console.error("Skipping generated_contents save: business id not found.");
+      console.error(
+        "Skipping generated_contents save: business id not found."
+      );
     }
 
-    return NextResponse.json({ content: contentWithIds });
+    // ✅ FIXED generation session creation
+    if (userId && businessId) {
+      const { data: sessionData, error: sessionError } = await supabase
+        .from("generation_sessions")
+        .insert({
+          user_id: userId,
+          business_id: businessId,
+          title: businessData.businessName,
+        })
+        .select();
+
+      if (sessionError) {
+        console.error(
+          "Generation session insert error:",
+          sessionError
+        );
+
+        throw new Error("Failed to record generation session");
+      }
+
+      if (!sessionData || sessionData.length === 0) {
+        console.error(
+          "Generation session insert returned no rows"
+        );
+
+        throw new Error(
+          "Generation session insert yielded no rows"
+        );
+      }
+    } else {
+      console.error(
+        "Cannot create generation session: missing user or business ID"
+      );
+    }
+
+    return NextResponse.json({
+      content: contentWithIds,
+    });
+
   } catch (error) {
     console.error("Content generation error:", error);
+
     return NextResponse.json(
-      { error: "Failed to generate content" },
-      { status: 500 }
+      {
+        error: "Failed to generate content",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

@@ -48,6 +48,9 @@ export default function BusinessForm() {
       if (!res.ok) throw new Error("Failed to generate ICPs");
 
       const data = await res.json();
+      if (data.businessId) {
+        dispatch({ type: "SET_BUSINESS_ID", payload: data.businessId });
+      }
       dispatch({ type: "SET_ICPS", payload: data.icps });
       dispatch({ type: "SET_STEP", payload: 3 });
     } catch {
@@ -61,8 +64,8 @@ export default function BusinessForm() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-tight text-white">Tell us about your business</h2>
-        <p className="mt-2 text-slate-200/80">
+        <h2 className="text-3xl font-semibold tracking-tight text-primary">Tell us about your business</h2>
+        <p className="mt-2 text-secondary">
           We&apos;ll use this to create your ideal customer profiles and content strategy.
         </p>
       </div>

@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
-@theme inline {
+:root {
   --font-sans: var(--font-plus-jakarta);
   --color-brand-primary: #1E3A5F;
   --color-brand-accent: #F59E0B;
+  --text-primary: #1a365d;
+  --text-secondary: #4b5563;
 }
 
 body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  color: #1a365d;
+  color: var(--text-primary);
   background:
     radial-gradient(ellipse at 20% -20%, rgba(200, 150, 255, 0.4) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 120%, rgba(150, 180, 255, 0.35) 0%, transparent 50%),
@@ -108,7 +110,7 @@ body {
 
 ::selection {
   background-color: #b7d2ff;
-  color: #1a365d;
+  color: var(--text-primary);
 }
 
 /* Glow card effect */

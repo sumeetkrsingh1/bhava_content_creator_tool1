@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Copy, RefreshCw, RotateCcw, Check, FileText } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
+import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
@@ -49,6 +50,11 @@ export default function ContentEditor() {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
       const res = await fetch("/api/generate-content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,6 +64,7 @@ export default function ContentEditor() {
           pillars: state.pillars,
           customizationAnswers: state.customizationAnswers,
           selectedStyles: state.selectedStyles,
+          userId: user.id,
         }),
       });
 
@@ -96,8 +103,8 @@ export default function ContentEditor() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-3xl font-semibold tracking-tight text-white">Your LinkedIn Content</h2>
-        <p className="text-slate-200/80 mt-2">
+        <h2 className="text-3xl font-semibold tracking-tight text-primary">Your LinkedIn Content</h2>
+        <p className="text-secondary mt-2">
           Edit, refine, and copy your generated content. Switch between variations below.
         </p>
       </div>
@@ -111,7 +118,7 @@ export default function ContentEditor() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === i
                 ? "bg-cyan-200 text-slate-950"
-                : "bg-white/10 text-slate-200 hover:bg-white/20 border border-white/20"
+                : "bg-white/10 text-secondary hover:bg-white/20 border border-white/20"
             }`}
           >
             <FileText className="w-4 h-4 inline mr-1.5" />
@@ -124,10 +131,10 @@ export default function ContentEditor() {
       <div className="bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
         {/* Preview */}
         <div className="p-6 border-b border-white/15 bg-white/10">
-          <p className="text-xs text-slate-300 mb-2 font-medium uppercase tracking-wider">
+          <p className="text-xs text-primary mb-2 font-medium uppercase tracking-wider">
             Preview
           </p>
-          <div className="whitespace-pre-line text-slate-100 leading-relaxed text-sm">
+          <div className="whitespace-pre-line text-primary leading-relaxed text-sm">
             {editedContent[activeTab]}
           </div>
         </div>
@@ -143,7 +150,7 @@ export default function ContentEditor() {
           <div className="flex items-center justify-between mt-2">
             <span
               className={`text-xs ${
-                charCount > 3000 ? "text-red-300" : "text-slate-300/80"
+                charCount > 3000 ? "text-red-300" : "text-secondary"
               }`}
             >
               {charCount} / 3,000 characters

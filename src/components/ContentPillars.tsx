@@ -27,8 +27,8 @@ export default function ContentPillars() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-tight text-white">Your Content Pillars</h2>
-        <p className="mt-2 text-slate-200/80">
+        <h2 className="text-3xl font-semibold tracking-tight text-primary">Your Content Pillars</h2>
+        <p className="mt-2 text-secondary">
           These pillars form the foundation of your LinkedIn content strategy. Each includes
           topic ideas to get you started.
         </p>
@@ -45,13 +45,13 @@ export default function ContentPillars() {
               className="w-full px-6 py-4 flex items-center justify-between text-left"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-cyan-200/20 flex items-center justify-center text-cyan-100 font-bold text-sm border border-cyan-100/35">
+                <div className="w-8 h-8 rounded-lg bg-cyan-200/20 flex items-center justify-center text-primary font-bold text-sm border border-primary/35">
                   {index + 1}
                 </div>
                 <div className="flex items-start gap-3">
                   <div>
-                    <h3 className="font-semibold text-white">{pillar.name}</h3>
-                    <p className="text-sm text-slate-200/80">{pillar.description}</p>
+                    <h3 className="font-semibold text-primary">{pillar.name}</h3>
+                    <p className="text-sm text-secondary">{pillar.description}</p>
                   </div>
                   {selectedPillar === pillar.id && (
                     <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
@@ -76,8 +76,8 @@ export default function ContentPillars() {
                   >
                     <Lightbulb className="w-5 h-5 text-brand-accent mt-0.5 shrink-0" />
                     <div>
-                      <h4 className="font-medium text-slate-100 text-sm">{topic.title}</h4>
-                      <p className="text-sm text-slate-200/75 mt-0.5">{topic.description}</p>
+                      <h4 className="font-medium text-primary text-sm">{topic.title}</h4>
+                      <p className="text-sm text-secondary mt-0.5">{topic.description}</p>
                     </div>
                   </div>
                 ))}

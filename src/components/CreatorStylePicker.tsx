@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
+import { supabase } from "@/lib/supabase";
 import { CreatorStyle } from "@/types";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -39,6 +40,11 @@ export default function CreatorStylePicker() {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
       const res = await fetch("/api/generate-content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,6 +54,7 @@ export default function CreatorStylePicker() {
           pillars: state.pillars,
           customizationAnswers: state.customizationAnswers,
           selectedStyles: state.selectedStyles,
+          userId: user.id,
         }),
       });
 
@@ -67,21 +74,25 @@ export default function CreatorStylePicker() {
     state.selectedStyles.some((s) => s.id === id);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-tight text-white">
+    <div className="max-w-4xl mx-auto premium-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden">
+      {/* Decorative blurred blobs for depth */}
+      <div className="absolute -top-32 -left-32 w-64 h-64 bg-purple-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] pointer-events-none" />
+
+      <div className="mb-10 text-center relative z-10">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gradient mb-3">
           Select Your Favorite Creator Style
         </h2>
-        <p className="text-slate-200/80 mt-2">
+        <p className="text-secondary text-lg">
           Pick one or more LinkedIn creators whose writing style you admire.
           We&apos;ll blend their approach into your content.
         </p>
       </div>
 
       {loadingStyles ? (
-        <p className="text-slate-200/80">Loading creator styles...</p>
+        <p className="text-secondary text-center relative z-10">Loading creator styles...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
           {creatorStyles.map((style) => (
           <Card
             key={style.id}
@@ -91,37 +102,37 @@ export default function CreatorStylePicker() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-cyan-200/20 border border-cyan-100/35 flex items-center justify-center text-cyan-100 font-bold text-sm">
+                  <div className="w-10 h-10 rounded-full bg-purple-200/50 border border-purple-300/50 flex items-center justify-center text-purple-800 font-bold text-sm">
                     {style.avatar}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">{style.name}</h3>
-                    <p className="text-xs text-slate-300/80">{style.handle}</p>
+                    <h3 className="font-semibold text-primary">{style.name}</h3>
+                    <p className="text-xs text-primary">{style.handle}</p>
                   </div>
                 </div>
                 {isSelected(style.id) && (
-                  <div className="w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-slate-950" />
+                  <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-white" />
                   </div>
                 )}
               </div>
 
-              <p className="text-sm text-slate-200/85">{style.description}</p>
+              <p className="text-sm text-secondary">{style.description}</p>
 
               <div className="flex flex-wrap gap-1.5">
                 {style.styleTags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-0.5 bg-amber-300/20 border border-amber-200/30 text-amber-100 text-xs rounded-full font-medium"
+                    className="px-2 py-0.5 bg-amber-100/60 border border-amber-300/60 text-amber-900 text-xs rounded-full font-medium"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
 
-              <div className="bg-white/10 rounded-lg p-3 border border-white/15">
-                <p className="text-xs text-slate-300 mb-1 font-medium">Sample style:</p>
-                <p className="text-sm text-slate-100/90 whitespace-pre-line leading-relaxed">
+              <div className="bg-white/50 rounded-lg p-3 border border-purple-200/50 shadow-sm">
+                <p className="text-xs text-secondary mb-1 font-medium">Sample style:</p>
+                <p className="text-sm text-primary whitespace-pre-line leading-relaxed">
                   {style.sampleSnippet}
                 </p>
               </div>
@@ -131,9 +142,10 @@ export default function CreatorStylePicker() {
         </div>
       )}
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-end relative z-10">
         <Button
           size="lg"
+          className="text-lg shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-shadow duration-300"
           onClick={handleGenerate}
           disabled={state.selectedStyles.length === 0}
           loading={state.isLoading}
