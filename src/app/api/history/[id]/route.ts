@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { BusinessData, ICP, ContentPillar, CustomizationAnswers, CreatorStyle, GeneratedContent } from '@/types';
