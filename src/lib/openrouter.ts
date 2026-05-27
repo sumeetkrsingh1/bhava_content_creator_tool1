@@ -19,11 +19,13 @@ export async function generateCompletion(
   userPrompt: string,
   options?: { temperature?: number; maxTokens?: number; label?: string }
 ): Promise<string> {
+  console.log("\n" + "=".repeat(80));
   if (options?.label) {
     console.log("[OpenRouter Prompt] step:", options.label);
   }
   console.log("[OpenRouter Prompt] systemPrompt:\n", systemPrompt);
   console.log("[OpenRouter Prompt] userPrompt:\n", userPrompt);
+  console.log("=".repeat(80) + "\n");
 
   const response = await client.chat.completions.create({
     model: process.env.OPENROUTER_MODEL || "openai/gpt-4o",

@@ -14,6 +14,7 @@ interface ContentRequest {
   businessData: BusinessData;
   selectedICP: ICP;
   pillars: ContentPillar[];
+  selectedPillarId: string | null;
   customizationAnswers: CustomizationAnswers | null;
   selectedStyles: CreatorStyle[];
   userId: string;
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
       businessData,
       selectedICP,
       pillars,
+      selectedPillarId,
       customizationAnswers,
       selectedStyles,
       userId,
@@ -121,12 +123,21 @@ Brand Voice & Tone:
 - Brand Personality: ${customizationAnswers.brandPersonality}
 - Target Emotion: ${customizationAnswers.audienceEmotion}
 - Communication Style: ${customizationAnswers.communicationStyle}
-- Unique Perspective: ${customizationAnswers.uniquePerspective}`
+- Unique Perspective: ${customizationAnswers.uniquePerspective}${customizationAnswers.targetAgeRange ? `\n- Target Audience Age Range: ${customizationAnswers.targetAgeRange}` : ""}`
       : "Use a professional yet approachable tone.";
 
-    const pillarTopics = pillars
-      .flatMap((p) => p.topics.map((t) => `${p.name}: ${t.title}`))
-      .join("\n- ");
+    // Use the selectedPillarId to pick the single chosen pillar
+    const selectedPillar = selectedPillarId
+      ? pillars.find((p) => p.id === selectedPillarId) || null
+      : pillars && pillars.length > 0
+        ? pillars[0]
+        : null;
+    const pillarSection = selectedPillar
+      ? `Pillar: ${selectedPillar.name}
+  Description: ${selectedPillar.description}
+  Topics:
+${selectedPillar.topics.map((t) => `    - ${t.title}: ${t.description}`).join("\n")}`
+      : "No pillar selected — generate general content about the business.";
 
     const systemPrompt = `You are a world-class LinkedIn content writer. Generate exactly 3 LinkedIn post variations.
 
@@ -156,6 +167,9 @@ ${businessData.productService}
 USPs:
 ${businessData.uniqueSellingPoints}
 
+Reason for Creating Content:
+${businessData.reason || "Not specified"}
+
 Target Audience:
 ${selectedICP.name} - ${selectedICP.title}
 
@@ -165,8 +179,8 @@ ${selectedICP.painPoints.join(", ")}
 Goals:
 ${selectedICP.goals.join(", ")}
 
-Topics:
-- ${pillarTopics}`;
+Content Pillar:
+${pillarSection}`;
 
     const result = await generateCompletion(systemPrompt, userPrompt, {
       temperature: 0.9,
@@ -186,6 +200,21 @@ Topics:
       const creatorStyleId =
         selectedStyles.length === 1 ? selectedStyles[0].id : null;
 
+      // Determine the next generation_group for this business
+      const { data: maxGroupData, error: maxGroupError } = await supabase
+        .from("generated_contents")
+        .select("generation_group")
+        .eq("business_id", businessId)
+        .order("generation_group", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (maxGroupError) {
+        console.error("Max generation_group query error:", maxGroupError);
+      }
+
+      const nextGroup = (maxGroupData?.generation_group ?? 0) + 1;
+
       const contentRows = contentWithIds.map((item, index) => ({
         business_id: businessId,
         version: index + 1,
@@ -193,6 +222,7 @@ Topics:
         body: item.body,
         cta: item.cta,
         creator_style_id: creatorStyleId,
+        generation_group: nextGroup,
       }));
 
       const { error: contentSaveError } = await supabase
@@ -211,34 +241,37 @@ Topics:
       );
     }
 
-    // Fixed generation session creation.
+    // Generation session — reuse existing session for this business, or create one.
+    // This ensures one session per business, with multiple generations tracked by generation_group.
     if (userId && businessId) {
-      const { data: sessionData, error: sessionError } = await supabase
+      // Check if a session already exists for this user + business
+      // Use limit(1) instead of maybeSingle() because existing duplicate sessions
+      // would cause maybeSingle() to error, making us insert yet another duplicate.
+      const { data: existingSessions } = await supabase
         .from("generation_sessions")
-        .insert({
-          user_id: userId,
-          business_id: businessId,
-          title: businessData.businessName,
-        })
-        .select();
+        .select("id")
+        .eq("user_id", userId)
+        .eq("business_id", businessId)
+        .limit(1);
 
-      if (sessionError) {
-        console.error(
-          "Generation session insert error:",
-          sessionError
-        );
+      if (!existingSessions || existingSessions.length === 0) {
+        const { error: sessionError } = await supabase
+          .from("generation_sessions")
+          .insert({
+            user_id: userId,
+            business_id: businessId,
+            title: businessData.businessName,
+          })
+          .select();
 
-        throw new Error("Failed to record generation session");
-      }
+        if (sessionError) {
+          console.error(
+            "Generation session insert error:",
+            sessionError
+          );
 
-      if (!sessionData || sessionData.length === 0) {
-        console.error(
-          "Generation session insert returned no rows"
-        );
-
-        throw new Error(
-          "Generation session insert yielded no rows"
-        );
+          throw new Error("Failed to record generation session");
+        }
       }
     } else {
       console.error(

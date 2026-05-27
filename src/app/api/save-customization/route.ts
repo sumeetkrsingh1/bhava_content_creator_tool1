@@ -49,6 +49,7 @@ export async function POST(req: Request) {
       audience_emotion: answers.audienceEmotion,
       communication_style: answers.communicationStyle,
       unique_perspective: answers.uniquePerspective,
+      target_age_range: answers.targetAgeRange || null,
     });
 
     if (saveError) {

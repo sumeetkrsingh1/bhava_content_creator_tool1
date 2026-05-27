@@ -15,7 +15,7 @@ const variants = {
   secondary:
     "border border-brand-primary bg-white/80 text-brand-primary shadow-[0_14px_30px_rgba(42,111,227,0.1)] hover:bg-brand-primary hover:text-white hover:shadow-[0_18px_38px_rgba(42,111,227,0.18)] dark:bg-white/8 dark:text-brand-star dark:hover:bg-brand-primary",
   outline: "border border-brand-primary/60 bg-transparent text-brand-primary hover:border-brand-primary hover:bg-brand-primary/10 hover:text-brand-primary hover:shadow-[0_18px_40px_rgba(42,111,227,0.18)] hover:-translate-y-0.5 dark:text-brand-star dark:hover:bg-brand-primary/20 dark:hover:text-brand-star",
-  ghost: "border border-transparent bg-transparent text-slate-700 hover:border-brand-primary/30 hover:bg-white/55 hover:text-brand-primary hover:shadow-[0_12px_24px_rgba(15,23,42,0.16)] hover:-translate-y-0.5 dark:text-brand-star/80 dark:hover:bg-white/10 dark:hover:text-brand-star",
+  ghost: "border border-brand-primary/30 bg-transparent text-slate-700 hover:border-brand-primary/60 hover:bg-white/55 hover:text-brand-primary hover:shadow-[0_12px_24px_rgba(15,23,42,0.16)] hover:-translate-y-0.5 dark:border-brand-primary/40 dark:text-brand-star/80 dark:hover:bg-white/10 dark:hover:text-brand-star", 
 };
 
 const sizes = {

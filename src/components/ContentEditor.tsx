@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Copy, RefreshCw, RotateCcw, Check, FileText } from "lucide-react";
+import { ArrowLeft, Copy, RefreshCw, RotateCcw, Check, FileText } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
@@ -37,7 +37,6 @@ export default function ContentEditor() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback
       const textarea = document.createElement("textarea");
       textarea.value = editedContent[activeTab];
       document.body.appendChild(textarea);
@@ -66,6 +65,7 @@ export default function ContentEditor() {
           businessData: state.businessData,
           selectedICP: state.selectedICP,
           pillars: state.pillars,
+          selectedPillarId: state.selectedPillarId,
           customizationAnswers: state.customizationAnswers,
           selectedStyles: state.selectedStyles,
           userId: user.id,
@@ -169,35 +169,46 @@ export default function ContentEditor() {
       </div>
 
       {/* Actions */}
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <Button onClick={handleCopy} variant={copied ? "secondary" : "primary"} size="lg">
-          {copied ? (
-            <>
-              <Check className="w-5 h-5 mr-2" />
-              Copied!
-            </>
-          ) : (
-            <>
-              <Copy className="w-5 h-5 mr-2" />
-              Copy to Clipboard
-            </>
-          )}
-        </Button>
-
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <Button
-          variant="outline"
+          variant="ghost"
           size="lg"
-          onClick={handleRegenerate}
-          loading={regenerating}
+          onClick={() => dispatch({ type: "GO_BACK", payload: 6 })}
+          disabled={regenerating}
         >
-          <RefreshCw className="w-5 h-5 mr-2" />
-          Regenerate
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back
         </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={handleCopy} variant={copied ? "secondary" : "primary"} size="lg">
+            {copied ? (
+              <>
+                <Check className="w-5 h-5 mr-2" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="w-5 h-5 mr-2" />
+                Copy to Clipboard
+              </>
+            )}
+          </Button>
 
-        <Button variant="ghost" size="lg" onClick={handleStartOver}>
-          <RotateCcw className="w-5 h-5 mr-2" />
-          Start Over
-        </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleRegenerate}
+            loading={regenerating}
+          >
+            <RefreshCw className="w-5 h-5 mr-2" />
+            Regenerate
+          </Button>
+
+          <Button variant="ghost" size="lg" onClick={handleStartOver}>
+            <RotateCcw className="w-5 h-5 mr-2" />
+            Start Over
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -30,14 +30,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
   const businessId = session.business_id;
 
-  // Fetch related data
+  // Fetch related data — include generation_group from generated_contents
   const [{ data: businessData }, { data: icpData }, { data: pillars }, { data: customization }, { data: styles }, { data: contents }] = await Promise.all([
-    supabase.from('businesses').select('business_name, industry_niche, target_market, product_service, business_goals, unique_selling_points').eq('id', businessId).single(),
+    supabase.from('businesses').select('business_name, industry_niche, target_market, product_service, business_goals, unique_selling_points, reason').eq('id', businessId).single(),
     supabase.from('icps').select('id, name, title, demographics, pain_points, goals, online_platforms, business_id').eq('business_id', businessId).maybeSingle(),
     supabase.from('content_pillars').select('id, name, description, topics').eq('business_id', businessId),
-    supabase.from('customisation_answers').select('brand_personality, audience_emotion, communication_style, unique_perspective').eq('business_id', businessId).maybeSingle(),
+    supabase.from('customisation_answers').select('brand_personality, audience_emotion, communication_style, unique_perspective, target_age_range').eq('business_id', businessId).maybeSingle(),
     supabase.from('business_styles').select('style_id').eq('business_id', businessId),
-    supabase.from('generated_contents').select('id, hook, body, cta, version, creator_style_id').eq('business_id', businessId),
+    supabase.from('generated_contents').select('id, hook, body, cta, version, creator_style_id, generation_group').eq('business_id', businessId).order('generation_group', { ascending: false }).order('version', { ascending: true }),
   ]);
 
   // Resolve styles
@@ -52,6 +52,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       productService: businessData.product_service,
       businessGoals: businessData.business_goals,
       uniqueSellingPoints: businessData.unique_selling_points,
+      reason: businessData.reason ?? '',
     } as BusinessData : null,
     selectedICP: icpData ? {
       id: icpData.id,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, SkipForward, Palette } from "lucide-react";
+import { ArrowRight, ArrowLeft, SkipForward, Palette } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
 import { CustomizationAnswers } from "@/types";
 import Button from "@/components/ui/Button";
@@ -32,23 +32,33 @@ const questions = [
     placeholder:
       "e.g., 10 years of hands-on experience, contrarian views on industry trends, insider knowledge...",
   },
+  {
+    key: "targetAgeRange" as const,
+    label: "What age range are you targeting?",
+    placeholder:
+      "e.g., 25-40 years, 18-24, 40-60, 30-50...",
+  },
 ];
 
 export default function CustomizeQuestions() {
   const { state, dispatch } = useWizard();
   const [isSaving, setIsSaving] = useState(false);
-  const [answers, setAnswers] = useState<CustomizationAnswers>({
-    brandPersonality: "",
-    audienceEmotion: "",
-    communicationStyle: "",
-    uniquePerspective: "",
-  });
+  const [answers, setAnswers] = useState<CustomizationAnswers>(
+    state.customizationAnswers || {
+      brandPersonality: "",
+      audienceEmotion: "",
+      communicationStyle: "",
+      uniquePerspective: "",
+      targetAgeRange: "",
+    }
+  );
 
   const DEFAULT_ANSWERS: CustomizationAnswers = {
     brandPersonality: "Professional yet approachable and trustworthy.",
     audienceEmotion: "Confident, informed, and ready to take action.",
     communicationStyle: "Clear, practical, and conversational.",
     uniquePerspective: "Experience-backed insights with actionable takeaways.",
+    targetAgeRange: "25-45 years",
   };
 
   const updateAnswer = (key: keyof CustomizationAnswers, value: string) => {
@@ -60,6 +70,7 @@ export default function CustomizeQuestions() {
     audienceEmotion: input.audienceEmotion.trim() || DEFAULT_ANSWERS.audienceEmotion,
     communicationStyle: input.communicationStyle.trim() || DEFAULT_ANSWERS.communicationStyle,
     uniquePerspective: input.uniquePerspective.trim() || DEFAULT_ANSWERS.uniquePerspective,
+    targetAgeRange: input.targetAgeRange?.trim() || DEFAULT_ANSWERS.targetAgeRange,
   });
 
   const saveCustomization = async (finalAnswers: CustomizationAnswers) => {
@@ -124,15 +135,26 @@ export default function CustomizeQuestions() {
         ))}
       </div>
 
-      <div className="mt-8 flex justify-between relative z-10">
-        <Button variant="ghost" size="lg" onClick={handleSkip} disabled={isSaving}>
-          <SkipForward className="w-5 h-5 mr-2" />
-          Skip
+      <div className="mt-8 flex items-center justify-between relative z-10">
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={() => dispatch({ type: "GO_BACK", payload: 4 })}
+          disabled={isSaving}
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back
         </Button>
-        <Button size="lg" className="text-lg" onClick={handleContinue} loading={isSaving} disabled={isSaving}>
-          Continue
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="lg" onClick={handleSkip} disabled={isSaving}>
+            <SkipForward className="w-5 h-5 mr-2" />
+            Skip
+          </Button>
+          <Button size="lg" className="text-lg" onClick={handleContinue} loading={isSaving} disabled={isSaving}>
+            Continue
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
+        </div>
       </div>
     </div>
   );

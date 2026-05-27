@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Target, TrendingUp, Globe, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Target, TrendingUp, Globe, Check } from "lucide-react";
 import { useWizard } from "@/context/WizardContext";
 import { ICP } from "@/types";
 import Button from "@/components/ui/Button";
@@ -135,7 +135,16 @@ export default function ICPSelection() {
         ))}
       </div>
 
-      <div className="mt-8 flex justify-end relative z-10">
+      <div className="mt-8 flex items-center justify-between relative z-10">
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={() => dispatch({ type: "GO_BACK", payload: 2 })}
+          disabled={state.isLoading}
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back
+        </Button>
         <Button
           size="lg"
           onClick={handleContinue}

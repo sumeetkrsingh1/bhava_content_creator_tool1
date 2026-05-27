@@ -10,11 +10,40 @@ const initialState: WizardState = {
   icps: [],
   selectedICP: null,
   pillars: [],
+  selectedPillarId: null,
   customizationAnswers: null,
   selectedStyles: [],
   generatedContent: [],
   isLoading: false,
 };
+
+function clearAfterStep(state: WizardState, step: number): WizardState {
+  const cleared = { ...state, currentStep: step };
+  if (step <= 2) {
+    cleared.icps = [];
+    cleared.selectedICP = null;
+    cleared.pillars = [];
+    cleared.customizationAnswers = null;
+    cleared.selectedStyles = [];
+    cleared.generatedContent = [];
+  } else if (step <= 3) {
+    cleared.selectedICP = null;
+    cleared.pillars = [];
+    cleared.customizationAnswers = null;
+    cleared.selectedStyles = [];
+    cleared.generatedContent = [];
+  } else if (step <= 4) {
+    cleared.customizationAnswers = null;
+    cleared.selectedStyles = [];
+    cleared.generatedContent = [];
+  } else if (step <= 5) {
+    cleared.selectedStyles = [];
+    cleared.generatedContent = [];
+  } else if (step <= 6) {
+    cleared.generatedContent = [];
+  }
+  return cleared;
+}
 
 function wizardReducer(state: WizardState, action: WizardAction): WizardState {
   switch (action.type) {
@@ -30,6 +59,8 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...state, selectedICP: action.payload };
     case "SET_PILLARS":
       return { ...state, pillars: action.payload };
+    case "SELECT_PILLAR":
+      return { ...state, selectedPillarId: action.payload };
     case "SET_CUSTOMIZATION":
       return { ...state, customizationAnswers: action.payload };
     case "TOGGLE_STYLE": {
@@ -53,6 +84,8 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...initialState };
     case "SET_FULL_SESSION":
       return { ...state, ...action.payload };
+    case "GO_BACK":
+      return clearAfterStep(state, action.payload);
     default:
       return state;
   }

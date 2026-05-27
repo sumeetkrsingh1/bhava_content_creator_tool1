@@ -9,16 +9,20 @@ import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 
 export default function BusinessForm() {
-  const { dispatch } = useWizard();
+  const { state, dispatch } = useWizard();
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState<BusinessData>({
+  const defaultForm: BusinessData = {
     businessName: "",
     industryNiche: "",
     targetMarket: "",
     productService: "",
     businessGoals: "",
     uniqueSellingPoints: "",
-  });
+    reason: "",
+  };
+  const [form, setForm] = useState<BusinessData>(
+    { ...defaultForm, ...state.businessData }
+  );
 
   const update = (field: keyof BusinessData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -109,6 +113,13 @@ export default function BusinessForm() {
           placeholder="What are you trying to achieve? e.g., Increase brand awareness, generate leads..."
           value={form.businessGoals}
           onChange={(e) => update("businessGoals", e.target.value)}
+        />
+
+        <Textarea
+          label="Reason"
+          placeholder="Why are you creating LinkedIn content right now? e.g., Launching a new offer, building founder authority, nurturing leads..."
+          value={form.reason}
+          onChange={(e) => update("reason", e.target.value)}
         />
 
         <Textarea

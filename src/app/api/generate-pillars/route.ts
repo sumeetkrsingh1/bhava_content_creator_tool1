@@ -3,6 +3,84 @@ import { supabase } from "@/lib/supabase";
 import { generateCompletion, parseJSON } from "@/lib/openrouter";
 import { BusinessData, ICP, ContentPillar } from "@/types";
 
+type PillarRow = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+type TopicRow = {
+  id: string;
+  pillar_id: string;
+  title: string;
+  description: string;
+};
+
+async function fetchSavedCustomPillars({
+  businessId,
+  icpDbId,
+}: {
+  businessId?: string | null;
+  icpDbId?: string | null;
+}): Promise<ContentPillar[]> {
+  if (!businessId && !icpDbId) return [];
+
+  let pillarQuery = supabase
+    .from("pillars")
+    .select("id, name, description")
+    .eq("custom", true)
+    .order("position", { ascending: true, nullsFirst: false })
+    .order("pillar_order", { ascending: true, nullsFirst: false });
+
+  if (businessId) {
+    pillarQuery = pillarQuery.eq("business_id", businessId);
+  } else if (icpDbId) {
+    pillarQuery = pillarQuery.eq("icp_id", icpDbId);
+  }
+
+  const { data: pillarRows, error: pillarsError } = await pillarQuery;
+
+  if (pillarsError) {
+    console.error("Saved custom pillars fetch error in generate-pillars:", pillarsError);
+    return [];
+  }
+
+  const rows = (pillarRows || []) as PillarRow[];
+  const pillarIds = rows.map((pillar) => pillar.id);
+
+  if (pillarIds.length === 0) return [];
+
+  const { data: topicRows, error: topicsError } = await supabase
+    .from("pillar_topics")
+    .select("id, pillar_id, title, description")
+    .in("pillar_id", pillarIds);
+
+  if (topicsError) {
+    console.error("Saved custom pillar topics fetch error in generate-pillars:", topicsError);
+    return [];
+  }
+
+  const topicsByPillar = ((topicRows || []) as TopicRow[]).reduce((map, topic) => {
+    const existing = map.get(topic.pillar_id) || [];
+    existing.push(topic);
+    map.set(topic.pillar_id, existing);
+    return map;
+  }, new Map<string, TopicRow[]>());
+
+  return rows.map((pillar) => ({
+    id: pillar.id,
+    name: pillar.name,
+    description: pillar.description,
+    custom: true,
+    saved: true,
+    topics: (topicsByPillar.get(pillar.id) || []).map((topic) => ({
+      id: topic.id,
+      title: topic.title,
+      description: topic.description,
+    })),
+  }));
+}
+
 export async function POST(req: Request) {
   try {
     const body: { businessData: BusinessData; selectedICP: ICP } = await req.json();
@@ -23,6 +101,7 @@ The pillars should directly address the ICP's pain points and goals while showca
     const userPrompt = `Business: ${businessData.businessName} (${businessData.industryNiche})
 Product/Service: ${businessData.productService}
 USPs: ${businessData.uniqueSellingPoints}
+Reason for Creating Content: ${businessData.reason || "Not specified"}
 
 Target ICP: ${selectedICP.name} - ${selectedICP.title}
 ICP Pain Points: ${selectedICP.painPoints.join(", ")}
@@ -102,6 +181,7 @@ ICP Goals: ${selectedICP.goals.join(", ")}`;
         position: index + 1,
         name: pillar.name,
         description: pillar.description,
+        custom: false,
       }));
 
       const { data: insertedPillars, error: pillarsError } = await supabase
@@ -131,7 +211,9 @@ ICP Goals: ${selectedICP.goals.join(", ")}`;
       console.error("Skipping pillar save: selected ICP database id not found.");
     }
 
-    return NextResponse.json({ pillars: pillarsWithIds });
+    const savedCustomPillars = await fetchSavedCustomPillars({ businessId, icpDbId });
+
+    return NextResponse.json({ pillars: [...pillarsWithIds, ...savedCustomPillars] });
   } catch (error) {
     console.error("Pillar generation error:", error);
     return NextResponse.json(
