@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextResponse } from "next/server";
 import { generateCompletion, parseJSON } from "@/lib/openrouter";
 import { CreatorStyle } from "@/types";
